@@ -70,19 +70,13 @@ class PersonRepository {
   }
 
   public async getFamilyTree(): Promise<PersonEntity[]> {
-    const tree = await this.personModel
-      .query()
-      .withGraphFetched("children.^")
+    const tree = await PersonModel.query()
       .whereNotExists(
-        this.personModel
-          .relatedQuery("children")
+        RelationModel.query()
           .select(1)
-          .where(
-            `${DBTables.RELATIONS}.child_id`,
-            "=",
-            `${DBTables.PERSONS}.id`
-          )
-      );
+          .whereRaw(`"${DBTables.RELATIONS}"."child_id" = "${DBTables.PERSONS}"."id"`)
+      )
+      .withGraphFetched("children.^");
 
     function parseToEntity(person: PersonModel): PersonEntity {
       return PersonEntity.initialize({

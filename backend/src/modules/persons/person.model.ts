@@ -12,19 +12,15 @@ class PersonModel extends AbstractModel {
 
   static relationMappings: RelationMappings = {
     children: {
-      relation: Model.HasManyRelation,
+      relation: Model.ManyToManyRelation,
       modelClass: PersonModel,
       join: {
         from: `${DBTables.PERSONS}.id`,
-        to: `${DBTables.RELATIONS}.parent_id`
-      },
-      modify: (qb: QueryBuilder<PersonModel>) => {
-        qb.join(
-          DBTables.RELATIONS,
-          `${DBTables.PERSONS}.id`,
-          "=",
-          `${DBTables.RELATIONS}.child_id`
-        );
+        through: {
+          from: `${DBTables.RELATIONS}.parent_id`,
+          to: `${DBTables.RELATIONS}.child_id`
+        },
+        to: `${DBTables.PERSONS}.id`
       }
     }
   };
