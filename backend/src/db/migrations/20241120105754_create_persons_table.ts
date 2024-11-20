@@ -1,13 +1,13 @@
 import type { Knex } from "knex";
 
-export const TABLE_NAME = 'persons';
+export const TABLE_NAME = "persons";
 
 const ColumnName = {
-  ID: 'id',
-  NAME: 'name',
-  AGE: 'age',
-  CREATED_AT: 'created_at',
-  UPDATED_AT: 'updated_at',
+  ID: "id",
+  NAME: "name",
+  AGE: "age",
+  CREATED_AT: "created_at",
+  UPDATED_AT: "updated_at"
 } as const;
 
 export async function up(knex: Knex): Promise<void> {

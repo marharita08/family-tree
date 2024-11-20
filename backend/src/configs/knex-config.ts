@@ -14,7 +14,7 @@ export default {
     },
     migrations: {
       directory: "src/db/migrations",
-      tableName: "migrations",
+      tableName: "migrations"
     },
     ...knexSnakeCaseMappers({ underscoreBetweenUppercaseLetters: true })
   }

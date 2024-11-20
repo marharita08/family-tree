@@ -1,20 +1,19 @@
 import type { Knex } from "knex";
 
-
 export const TableName = {
-  PERSON: 'persons',
-  RELATIONS: 'relations'
+  PERSON: "persons",
+  RELATIONS: "relations"
 } as const;
 
 export const ColumnName = {
-  ID: 'id',
-  PARENT_ID: 'parent_id',
-  CHILD_ID: 'child_id',
-  CREATED_AT: 'created_at',
-  UPDATED_AT: 'updated_at',
+  ID: "id",
+  PARENT_ID: "parent_id",
+  CHILD_ID: "child_id",
+  CREATED_AT: "created_at",
+  UPDATED_AT: "updated_at"
 } as const;
 
-const DELETE_STRATEGY = 'CASCADE';
+const DELETE_STRATEGY = "CASCADE";
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable(TableName.RELATIONS, table => {
