@@ -1,8 +1,11 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 
+import { Environment } from "./configs/environment";
+import "./db/db";
+
 const app = express();
-const port = 3001;
+const port = Environment.PORT;
 
 app.use(cors());
 app.use(express.json());
