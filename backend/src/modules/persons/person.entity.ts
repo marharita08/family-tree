@@ -1,3 +1,5 @@
+import { PersonDto } from "../../types/person-dto.type";
+
 class PersonEntity {
   private id: null | number;
 
@@ -118,7 +120,7 @@ class PersonEntity {
     updatedAt: string;
     name: string;
     age: number | null;
-    children: PersonEntity[] | null;
+    children: PersonDto[] | null;
   } {
     return {
       id: this.id as number,
@@ -127,6 +129,26 @@ class PersonEntity {
       name: this.name,
       age: this.age,
       children: this.children
+        ? this.children.map(child => child.toObject())
+        : null
+    };
+  }
+
+  public toShortObject(): {
+    id: number;
+    createdAt: string;
+    updatedAt: string;
+    name: string;
+    age: number | null;
+    children: PersonDto[] | null;
+  } {
+    return {
+      id: this.id as number,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+      name: this.name,
+      age: this.age,
+      children: null
     };
   }
 }

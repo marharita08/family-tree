@@ -99,6 +99,21 @@ class PersonRepository {
 
     return tree.map(person => parseToEntity(person));
   }
+
+  public async findAll(): Promise<PersonEntity[]> {
+    const persons = await this.personModel.query().orderBy("name");
+
+    return persons.map(person =>
+      PersonEntity.initialize({
+        id: person.id,
+        name: person.name,
+        age: person.age,
+        createdAt: person.createdAt,
+        updatedAt: person.updatedAt,
+        children: null
+      })
+    );
+  }
 }
 
 export { PersonRepository };
