@@ -1,45 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
+import { RootState, AppDispatch } from "../../store/store";
+import { actions } from "../../store/family-tree/family-tree.slice";
 import { PersonDto } from "../../types/person-dto.type";
-import { envConfig } from "../../configs/env.config";
 import styles from "./family-tree.module.css";
 
 const FamilyTree: React.FC = () => {
-  const [tree, setTree] = useState<PersonDto[] | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [openNodes, setOpenNodes] = useState<Set<string>>(new Set());
+  const dispatch = useDispatch<AppDispatch>();
+  const { tree, loading, error, openNodes } = useSelector(
+    (state: RootState) => state.familyTree
+  );
 
   useEffect(() => {
-    const fetchTree = async () => {
-      try {
-        const response = await fetch(`${envConfig.apiUrl}persons/family-tree`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch family tree");
-        }
-        const data: PersonDto[] = await response.json();
-        setTree(data);
-      } catch (err: unknown) {
-        setError((err as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTree();
-  }, []);
-
-  const toggleNode = (id: string) => {
-    setOpenNodes(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) {
-        newSet.delete(id);
-      } else {
-        newSet.add(id);
-      }
-      return newSet;
-    });
-  };
+    dispatch(actions.fetchFamilyTreeStart());
+  }, [dispatch]);
 
   const renderTree = (persons: PersonDto[], rootId: number | null) => (
     <ul className={styles.tree}>
@@ -47,8 +22,8 @@ const FamilyTree: React.FC = () => {
         const _rootId = rootId ?? person.id;
         const nodeId = `${_rootId}-${person.id}`;
         const hasChildren = person.children && person.children.length > 0;
-        const isOpen = openNodes.has(nodeId) || !hasChildren;
-        const handleToggleNode = () => toggleNode(nodeId);
+        const isOpen = openNodes.includes(nodeId) || !hasChildren;
+        const handleToggleNode = () => dispatch(actions.toggleNode(nodeId));
 
         return (
           <li key={nodeId} className={styles.person}>
