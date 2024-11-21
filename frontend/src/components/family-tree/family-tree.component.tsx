@@ -8,6 +8,7 @@ const FamilyTree: React.FC = () => {
   const [tree, setTree] = useState<PersonDto[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [openNodes, setOpenNodes] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const fetchTree = async () => {
@@ -28,18 +29,45 @@ const FamilyTree: React.FC = () => {
     fetchTree();
   }, []);
 
-  const renderTree = (persons: PersonDto[]) => (
+  const toggleNode = (id: string) => {
+    setOpenNodes(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
+
+  const renderTree = (persons: PersonDto[], rootId: number | null) => (
     <ul className={styles.tree}>
-      {persons.map(person => (
-        <li key={person.id} className={styles.person}>
-          <div className={styles.personInfo}>
-            {person.name} {person.age !== null && `(Age: ${person.age})`}
-          </div>
-          {person.children &&
-            person.children.length > 0 &&
-            renderTree(person.children)}
-        </li>
-      ))}
+      {persons.map(person => {
+        const _rootId = rootId ?? person.id;
+        const nodeId = `${_rootId}-${person.id}`;
+        const hasChildren = person.children && person.children.length > 0;
+        const isOpen = openNodes.has(nodeId) || !hasChildren;
+        const handleToggleNode = () => toggleNode(nodeId);
+
+        return (
+          <li key={nodeId} className={styles.person}>
+            <div className={styles.personInfo}>
+              <button
+                className={styles.toggleButton}
+                onClick={handleToggleNode}
+                disabled={!hasChildren}
+              >
+                {isOpen ? "−" : "+"}
+              </button>
+              {person.name} {person.age !== null && `(Age: ${person.age})`}
+            </div>
+            {hasChildren &&
+              isOpen &&
+              renderTree(person.children as PersonDto[], _rootId)}
+          </li>
+        );
+      })}
     </ul>
   );
 
@@ -55,7 +83,7 @@ const FamilyTree: React.FC = () => {
     return <div className={styles.empty}>No data available</div>;
   }
 
-  return <div className={styles.container}>{renderTree(tree)}</div>;
+  return <div className={styles.container}>{renderTree(tree, null)}</div>;
 };
 
 export { FamilyTree };
