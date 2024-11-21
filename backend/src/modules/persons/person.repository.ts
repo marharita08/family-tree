@@ -74,7 +74,9 @@ class PersonRepository {
       .whereNotExists(
         RelationModel.query()
           .select(1)
-          .whereRaw(`"${DBTables.RELATIONS}"."child_id" = "${DBTables.PERSONS}"."id"`)
+          .whereRaw(
+            `"${DBTables.RELATIONS}"."child_id" = "${DBTables.PERSONS}"."id"`
+          )
       )
       .withGraphFetched("children.^");
 

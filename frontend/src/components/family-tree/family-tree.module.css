@@ -1,0 +1,39 @@
+.container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.tree {
+  list-style-type: none;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.person {
+  margin: 5px 0;
+}
+
+.personInfo {
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.loading {
+  text-align: center;
+  color: #007bff;
+  font-size: 18px;
+}
+
+.error {
+  text-align: center;
+  color: #dc3545;
+  font-size: 18px;
+}
+
+.empty {
+  text-align: center;
+  color: #6c757d;
+  font-size: 16px;
+}
