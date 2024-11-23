@@ -7,7 +7,7 @@ import {
   addPersonSaga,
   updatePersonSaga,
   deletePersonSaga
-} from "./family-tree/family-tree.saga";
+} from "./family-tree/saga/saga";
 
 const sagaMiddleware = createSagaMiddleware();
 
