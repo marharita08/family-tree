@@ -1,6 +1,7 @@
 import styles from "./confirm-delete-modal.module.css";
 import { PersonDto } from "../../types/person-dto.type";
 import { Button } from "../button/button.component";
+import { Modal } from "../modal/modal.component";
 
 interface PersonModalProps {
   isOpen: boolean;
@@ -15,17 +16,10 @@ const DeletePersonModal: React.FC<PersonModalProps> = ({
   onConfirm,
   person
 }) => {
-  if (!isOpen) {
-    return null;
-  }
-
   return (
-    <div className={styles.modalOverlay}>
-      <div className={styles.modal}>
-        <button className={styles.closeButton} onClick={onClose}>
-          ×
-        </button>
-        <h2>Delete Person</h2>
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <h2>Delete Person</h2>
+      <div className={styles.body}>
         <div>
           Are you sure that you want to delete {person.name} from family tree?
         </div>
@@ -34,7 +28,7 @@ const DeletePersonModal: React.FC<PersonModalProps> = ({
           <Button label="No" onClick={onClose} />
         </div>
       </div>
-    </div>
+    </Modal>
   );
 };
 

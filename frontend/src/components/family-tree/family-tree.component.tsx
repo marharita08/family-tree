@@ -126,18 +126,23 @@ const FamilyTree: React.FC = () => {
         persons={persons ?? []}
         onSubmit={handleCreatePerson}
       />
-      <UpdatePersonModal
-        isOpen={isUpdatePersonModalOpen}
-        onClose={closeUpdatePersonModal}
-        onSubmit={handleUpdatePerson}
-        person={person as PersonDto}
-      />
-      <DeletePersonModal
-        isOpen={isDeletePersonModalOpen}
-        onClose={closeDeletePersonModal}
-        person={person as PersonDto}
-        onConfirm={handleDeleteConfirmed}
-      />
+      {person && (
+        <>
+          <UpdatePersonModal
+            isOpen={isUpdatePersonModalOpen}
+            onClose={closeUpdatePersonModal}
+            onSubmit={handleUpdatePerson}
+            person={person as PersonDto}
+          />
+
+          <DeletePersonModal
+            isOpen={isDeletePersonModalOpen}
+            onClose={closeDeletePersonModal}
+            person={person as PersonDto}
+            onConfirm={handleDeleteConfirmed}
+          />
+        </>
+      )}
       {!tree || tree.length === 0 ? (
         <div className={styles.empty}>No data available</div>
       ) : (
