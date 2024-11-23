@@ -11,6 +11,7 @@ import { PersonCreateDto } from "../../types/person-create-dto.type";
 import { useModalOpen } from "../../hooks/useModalOpen";
 import { PersonUpdateDto } from "../../types/person-update-dto.type";
 import { UpdatePersonModal } from "../update-person-modal/update-person-modal.component";
+import { DeletePersonModal } from "../confirm-delete-modal/confirm-delete-modal.component";
 
 const FamilyTree: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -27,6 +28,11 @@ const FamilyTree: React.FC = () => {
     isModalOpen: isUpdatePersonModalOpen,
     openModal: openUpdatePersonModal,
     closeModal: closeUpdatePersonModal
+  } = useModalOpen();
+  const {
+    isModalOpen: isDeletePersonModalOpen,
+    openModal: openDeletePersonModal,
+    closeModal: closeDeletePersonModal
   } = useModalOpen();
 
   useEffect(() => {
@@ -48,6 +54,16 @@ const FamilyTree: React.FC = () => {
   const handleEdit = (person: PersonDto) => () => {
     dispatch(actions.setPerson(person));
     openUpdatePersonModal();
+  };
+
+  const handleDelete = (person: PersonDto) => () => {
+    dispatch(actions.setPerson(person));
+    openDeletePersonModal();
+  };
+
+  const handleDeleteConfirmed = () => {
+    dispatch(actions.deletePersonStart((person as PersonDto).id));
+    closeDeletePersonModal();
   };
 
   const renderTree = (persons: PersonDto[], rootId: number | null) => (
@@ -72,8 +88,9 @@ const FamilyTree: React.FC = () => {
                 </button>
                 {person.name} {person.age !== null && `(Age: ${person.age})`}
               </div>
-              <div>
+              <div className={styles.actionButtons}>
                 <Button onClick={handleEdit(person)} label="Edit" />
+                <Button onClick={handleDelete(person)} label="Delete" />
               </div>
             </div>
             {hasChildren &&
@@ -114,6 +131,12 @@ const FamilyTree: React.FC = () => {
         onClose={closeUpdatePersonModal}
         onSubmit={handleUpdatePerson}
         person={person as PersonDto}
+      />
+      <DeletePersonModal
+        isOpen={isDeletePersonModalOpen}
+        onClose={closeDeletePersonModal}
+        person={person as PersonDto}
+        onConfirm={handleDeleteConfirmed}
       />
       {!tree || tree.length === 0 ? (
         <div className={styles.empty}>No data available</div>

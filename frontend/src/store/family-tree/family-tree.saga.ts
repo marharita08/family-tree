@@ -8,7 +8,11 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
-  return await response.json();
+  const contentType = response.headers.get("content-type");
+  if (contentType && contentType.includes("application/json")) {
+    return await response.json();
+  }
+  return null as unknown as T;
 }
 
 function* fetchFamilyTree() {
@@ -91,4 +95,21 @@ function* updatePerson(action: ReturnType<typeof actions.updatePersonStart>) {
 
 export function* updatePersonSaga() {
   yield takeLatest(actions.updatePersonStart.type, updatePerson);
+}
+
+function* deletePerson(action: ReturnType<typeof actions.deletePersonStart>) {
+  try {
+    yield call(fetchJson, `${envConfig.apiUrl}persons/${action.payload}`, {
+      method: "DELETE"
+    });
+    yield put(actions.deletePersonSuccess());
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    yield put(actions.deletePersonFailure(errorMessage));
+  }
+}
+
+export function* deletePersonSaga() {
+  yield takeLatest(actions.deletePersonStart.type, deletePerson);
 }

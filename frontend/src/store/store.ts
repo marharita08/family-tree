@@ -5,7 +5,8 @@ import {
   familyTreeSaga,
   personsSaga,
   addPersonSaga,
-  updatePersonSaga
+  updatePersonSaga,
+  deletePersonSaga
 } from "./family-tree/family-tree.saga";
 
 const sagaMiddleware = createSagaMiddleware();
@@ -22,6 +23,7 @@ sagaMiddleware.run(familyTreeSaga);
 sagaMiddleware.run(personsSaga);
 sagaMiddleware.run(addPersonSaga);
 sagaMiddleware.run(updatePersonSaga);
+sagaMiddleware.run(deletePersonSaga);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

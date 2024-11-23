@@ -137,6 +137,33 @@ const { reducer, actions } = createSlice({
     updatePersonFailure(state, action: PayloadAction<string>) {
       state.loading = false;
       state.error = action.payload;
+    },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    deletePersonStart(state, _: PayloadAction<number>) {
+      state.loading = true;
+      state.error = null;
+    },
+    deletePersonSuccess(state) {
+      state.loading = false;
+      const person = state.person as PersonDto;
+      if (state.persons) {
+        state.persons = state.persons.filter(per => per.id !== person.id);
+      }
+
+      function deletePerson(pers: PersonDto[]) {
+        pers.forEach(per => {
+          if (per.children) {
+            per.children = deletePerson(per.children);
+          }
+        });
+        return pers.filter(per => per.id !== person.id);
+      }
+
+      state.tree = deletePerson(state.tree as PersonDto[]);
+    },
+    deletePersonFailure(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
     }
   }
 });
