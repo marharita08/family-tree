@@ -8,6 +8,7 @@ import { asyncHandler } from "../../middlewares/async-handler.middleware";
 import { PersonCreateDto } from "../../types/person-create-dto.type";
 import { HTTPStatus } from "../../enums/http-status.enum";
 import { PersonUpdateDto } from "../../types/person-update-dto.type";
+import { AddPersonSchema } from "../../validation-schemas/add-person.validation-schema";
 
 const personRepository = new PersonRepository(PersonModel, RelationModel);
 const personService = new PersonService(personRepository);
@@ -17,7 +18,7 @@ const router = Router();
 router.post(
   "/",
   asyncHandler(async (req: Request, res: Response) => {
-    const payload: PersonCreateDto = req.body;
+    const payload: PersonCreateDto = AddPersonSchema.parse(req.body);
     const person = await personService.create(payload);
     res.status(HTTPStatus.CREATED).json(person);
   })

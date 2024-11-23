@@ -25,13 +25,7 @@ const FamilyTree: React.FC = () => {
   }, [dispatch]);
 
   const handleCreatePerson = (data: PersonCreateDto) => {
-    const preparedData = Object.fromEntries(
-      Object.entries(data).map(([key, value]) => [
-        key,
-        value === "" ? null : value
-      ])
-    ) as PersonCreateDto;
-    dispatch(actions.addPersonStart(preparedData));
+    dispatch(actions.addPersonStart(data));
     closeModal();
   };
 

@@ -55,9 +55,14 @@ const { reducer, actions } = createSlice({
       if (!state.tree) {
         state.tree = [];
       }
+      if (!state.persons) {
+        state.persons = [];
+      }
+      state.persons.push(action.payload);
+      state.persons.sort((a, b) => a.name.localeCompare(b.name));
       if (!person.parent1Id && !person.parent2Id) {
         state.tree.push(action.payload);
-        state.tree.sort();
+        state.tree.sort((a, b) => a.name.localeCompare(b.name));
       }
 
       function addChild(parentId: number) {
@@ -75,10 +80,10 @@ const { reducer, actions } = createSlice({
         state.tree?.forEach(per => searchParent(per, parentId));
       }
       if (person.parent1Id) {
-        addChild(person.parent1Id);
+        addChild(person.parent1Id as number);
       }
       if (person.parent2Id) {
-        addChild(person.parent2Id);
+        addChild(person.parent2Id as number);
       }
     },
     addPersonFailure(state, action: PayloadAction<string>) {

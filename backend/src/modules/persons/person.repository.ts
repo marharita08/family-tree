@@ -78,7 +78,8 @@ class PersonRepository {
             `"${DBTables.RELATIONS}"."child_id" = "${DBTables.PERSONS}"."id"`
           )
       )
-      .withGraphFetched("children.^");
+      .withGraphFetched("children.^")
+      .orderBy("name");
 
     function parseToEntity(person: PersonModel): PersonEntity {
       return PersonEntity.initialize({

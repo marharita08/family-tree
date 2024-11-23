@@ -1,9 +1,9 @@
 import {
-  useController,
   FieldErrors,
   FieldValues,
   Control,
-  FieldPath
+  FieldPath,
+  Controller
 } from "react-hook-form";
 
 import { InputOption } from "../../types/input-option.type";
@@ -14,9 +14,10 @@ type Properties<T extends FieldValues> = {
   control: Control<T>;
   errors?: FieldErrors<T>;
   placeholder?: string;
-  type?: string;
+  type?: "text" | "number";
   name: FieldPath<T>;
   options?: InputOption[];
+  isSelect?: boolean;
 };
 
 const Input = <T extends FieldValues>({
@@ -26,13 +27,18 @@ const Input = <T extends FieldValues>({
   type = "text",
   name,
   control,
-  options
+  options,
+  isSelect = false
 }: Properties<T>): JSX.Element => {
-  const { field } = useController({ control, name });
-
   const error = errors?.[name]?.message;
   const hasError = Boolean(error);
-  const isSelect = type === "select";
+  const isNumber = type === "number";
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+  ) => {
+    return isNumber && e.target.value ? Number(e.target.value) : e.target.value;
+  };
 
   return (
     <div className={styles.container}>
@@ -40,23 +46,44 @@ const Input = <T extends FieldValues>({
         {label}
       </label>
       {isSelect ? (
-        <select id={name} {...field} className={styles.input}>
-          <option value={""}>None</option>
-          {options &&
-            options.map(option => (
-              <option key={option.value} value={option.value}>
-                {" "}
-                {option.label}
-              </option>
-            ))}
-        </select>
+        <Controller
+          name={name}
+          control={control}
+          render={({ field }) => (
+            <select
+              id={name}
+              {...field}
+              className={styles.input}
+              onChange={e => {
+                field.onChange(handleChange(e));
+              }}
+            >
+              <option value={""}>None</option>
+              {options &&
+                options.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+            </select>
+          )}
+        />
       ) : (
-        <input
-          id={name}
-          type={type}
-          placeholder={placeholder}
-          {...field}
-          className={styles.input}
+        <Controller
+          name={name}
+          control={control}
+          render={({ field }) => (
+            <input
+              id={name}
+              type={type}
+              placeholder={placeholder}
+              {...field}
+              className={styles.input}
+              onChange={e => {
+                field.onChange(handleChange(e));
+              }}
+            />
+          )}
         />
       )}
       {hasError && <span className={styles.error}>{error as string}</span>}

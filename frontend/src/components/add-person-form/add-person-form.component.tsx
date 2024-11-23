@@ -1,13 +1,14 @@
 import { useCallback } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input } from "../input/input.component";
 import { Button } from "../button/button.component";
 import { PersonCreateDto } from "../../types/person-create-dto.type";
-
 import styles from "./add-person-form.module.css";
 import { PersonDto } from "../../types/person-dto.type";
 import { InputOption } from "../../types/input-option.type";
+import { AddPersonSchema } from "../../validation-schemas/add-person.validation-schema";
 
 type Props = {
   defaultValues: PersonCreateDto;
@@ -26,6 +27,7 @@ const AddPersonForm: React.FC<Props> = ({
     formState: { errors },
     reset
   } = useForm<PersonCreateDto>({
+    resolver: zodResolver(AddPersonSchema),
     defaultValues: defaultValues,
     mode: "onBlur"
   });
@@ -67,8 +69,9 @@ const AddPersonForm: React.FC<Props> = ({
         errors={errors}
         control={control}
         name="parent1Id"
-        type="select"
+        type="number"
         options={parentOptions}
+        isSelect
       />
 
       <Input
@@ -76,8 +79,9 @@ const AddPersonForm: React.FC<Props> = ({
         errors={errors}
         control={control}
         name="parent2Id"
-        type="select"
+        type="number"
         options={parentOptions}
+        isSelect
       />
 
       <div className={styles.button}>
