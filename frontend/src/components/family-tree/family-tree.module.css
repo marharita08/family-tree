@@ -46,3 +46,13 @@
   margin-right: 5px;
   font-weight: bold;
 }
+
+.addPersonButton {
+  padding: 20px 40px 0;
+  width: 120px;
+}
+
+.title {
+  font-size: 25px;
+  text-align: center;
+}

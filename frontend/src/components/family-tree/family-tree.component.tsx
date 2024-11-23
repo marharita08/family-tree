@@ -1,20 +1,39 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import { RootState, AppDispatch } from "../../store/store";
 import { actions } from "../../store/family-tree/family-tree.slice";
 import { PersonDto } from "../../types/person-dto.type";
 import styles from "./family-tree.module.css";
+import { AddPersonModal } from "../add-person-modal/add-person-modal.component";
+import { Button } from "../button/button.component";
+import { PersonCreateDto } from "../../types/person-create-dto.type";
 
 const FamilyTree: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { tree, loading, error, openNodes } = useSelector(
+  const { tree, loading, error, openNodes, persons } = useSelector(
     (state: RootState) => state.familyTree
   );
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const openModal = () => setModalOpen(true);
+  const closeModal = () => setModalOpen(false);
 
   useEffect(() => {
     dispatch(actions.fetchFamilyTreeStart());
+    dispatch(actions.fetchPersonsStart());
   }, [dispatch]);
+
+  const handleCreatePerson = (data: PersonCreateDto) => {
+    const preparedData = Object.fromEntries(
+      Object.entries(data).map(([key, value]) => [
+        key,
+        value === "" ? null : value
+      ])
+    ) as PersonCreateDto;
+    dispatch(actions.addPersonStart(preparedData));
+    closeModal();
+  };
 
   const renderTree = (persons: PersonDto[], rootId: number | null) => (
     <ul className={styles.tree}>
@@ -58,7 +77,25 @@ const FamilyTree: React.FC = () => {
     return <div className={styles.empty}>No data available</div>;
   }
 
-  return <div className={styles.container}>{renderTree(tree, null)}</div>;
+  return (
+    <>
+      <h1 className={styles.title}>Family tree</h1>
+      <div className={styles.addPersonButton}>
+        <Button onClick={openModal} label="Add person" />
+      </div>
+      <AddPersonModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        persons={persons ?? []}
+        onSubmit={handleCreatePerson}
+      />
+      {!tree || tree.length === 0 ? (
+        <div className={styles.empty}>No data available</div>
+      ) : (
+        <div className={styles.container}>{renderTree(tree, null)}</div>
+      )}
+    </>
+  );
 };
 
 export { FamilyTree };
