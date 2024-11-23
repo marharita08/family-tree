@@ -1,0 +1,66 @@
+.container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.tree {
+  list-style-type: none;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.person {
+  margin: 5px 0;
+}
+
+.personInfo {
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.loading {
+  text-align: center;
+  color: #007bff;
+  font-size: 18px;
+}
+
+.error {
+  text-align: center;
+  color: #dc3545;
+  font-size: 18px;
+}
+
+.empty {
+  text-align: center;
+  color: #6c757d;
+  font-size: 16px;
+}
+
+.toggleButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 5px;
+  font-weight: bold;
+}
+
+.addPersonButton {
+  padding: 20px 40px 0;
+  width: 120px;
+}
+
+.title {
+  font-size: 25px;
+  text-align: center;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 10px;
+}

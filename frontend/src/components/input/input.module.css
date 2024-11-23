@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.input {
+  border-radius: 5px;
+  padding: 10px;
+  border-width: 1px;
+  resize: vertical;
+  min-height: 17px;
+}
+
+.label {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.error {
+  font-size: 14px;
+  color: red;
+}
