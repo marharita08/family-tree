@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import { RootState, AppDispatch } from "../../store/store";
@@ -8,16 +8,26 @@ import styles from "./family-tree.module.css";
 import { AddPersonModal } from "../add-person-modal/add-person-modal.component";
 import { Button } from "../button/button.component";
 import { PersonCreateDto } from "../../types/person-create-dto.type";
+import { useModalOpen } from "../../hooks/useModalOpen";
+import { PersonUpdateDto } from "../../types/person-update-dto.type";
+import { UpdatePersonModal } from "../update-person-modal/update-person-modal.component";
 
 const FamilyTree: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { tree, loading, error, openNodes, persons } = useSelector(
+  const { tree, loading, error, openNodes, persons, person } = useSelector(
     (state: RootState) => state.familyTree
   );
-  const [isModalOpen, setModalOpen] = useState(false);
 
-  const openModal = () => setModalOpen(true);
-  const closeModal = () => setModalOpen(false);
+  const {
+    isModalOpen: isAddPersonModalOpen,
+    openModal: openAddPersonModal,
+    closeModal: closeAddPersonModal
+  } = useModalOpen();
+  const {
+    isModalOpen: isUpdatePersonModalOpen,
+    openModal: openUpdatePersonModal,
+    closeModal: closeUpdatePersonModal
+  } = useModalOpen();
 
   useEffect(() => {
     dispatch(actions.fetchFamilyTreeStart());
@@ -26,7 +36,18 @@ const FamilyTree: React.FC = () => {
 
   const handleCreatePerson = (data: PersonCreateDto) => {
     dispatch(actions.addPersonStart(data));
-    closeModal();
+    closeAddPersonModal();
+  };
+
+  const handleUpdatePerson = (data: PersonUpdateDto) => {
+    const id = (person as PersonDto).id;
+    dispatch(actions.updatePersonStart({ id, person: data }));
+    closeUpdatePersonModal();
+  };
+
+  const handleEdit = (person: PersonDto) => () => {
+    dispatch(actions.setPerson(person));
+    openUpdatePersonModal();
   };
 
   const renderTree = (persons: PersonDto[], rootId: number | null) => (
@@ -41,14 +62,19 @@ const FamilyTree: React.FC = () => {
         return (
           <li key={nodeId} className={styles.person}>
             <div className={styles.personInfo}>
-              <button
-                className={styles.toggleButton}
-                onClick={handleToggleNode}
-                disabled={!hasChildren}
-              >
-                {isOpen ? "−" : "+"}
-              </button>
-              {person.name} {person.age !== null && `(Age: ${person.age})`}
+              <div>
+                <button
+                  className={styles.toggleButton}
+                  onClick={handleToggleNode}
+                  disabled={!hasChildren}
+                >
+                  {isOpen ? "−" : "+"}
+                </button>
+                {person.name} {person.age !== null && `(Age: ${person.age})`}
+              </div>
+              <div>
+                <Button onClick={handleEdit(person)} label="Edit" />
+              </div>
             </div>
             {hasChildren &&
               isOpen &&
@@ -75,13 +101,19 @@ const FamilyTree: React.FC = () => {
     <>
       <h1 className={styles.title}>Family tree</h1>
       <div className={styles.addPersonButton}>
-        <Button onClick={openModal} label="Add person" />
+        <Button onClick={openAddPersonModal} label="Add person" />
       </div>
       <AddPersonModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
+        isOpen={isAddPersonModalOpen}
+        onClose={closeAddPersonModal}
         persons={persons ?? []}
         onSubmit={handleCreatePerson}
+      />
+      <UpdatePersonModal
+        isOpen={isUpdatePersonModalOpen}
+        onClose={closeUpdatePersonModal}
+        onSubmit={handleUpdatePerson}
+        person={person as PersonDto}
       />
       {!tree || tree.length === 0 ? (
         <div className={styles.empty}>No data available</div>

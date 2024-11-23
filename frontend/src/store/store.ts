@@ -4,7 +4,8 @@ import { reducer as familyTreeReducer } from "./family-tree/family-tree.slice";
 import {
   familyTreeSaga,
   personsSaga,
-  addPersonSaga
+  addPersonSaga,
+  updatePersonSaga
 } from "./family-tree/family-tree.saga";
 
 const sagaMiddleware = createSagaMiddleware();
@@ -20,6 +21,7 @@ export const store = configureStore({
 sagaMiddleware.run(familyTreeSaga);
 sagaMiddleware.run(personsSaga);
 sagaMiddleware.run(addPersonSaga);
+sagaMiddleware.run(updatePersonSaga);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

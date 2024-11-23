@@ -1,6 +1,6 @@
 type PersonUpdateDto = {
   name: string;
-  age: number | null;
+  age: number | null | string;
 };
 
 export { type PersonUpdateDto };

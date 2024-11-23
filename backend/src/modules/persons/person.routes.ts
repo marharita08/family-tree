@@ -9,6 +9,7 @@ import { PersonCreateDto } from "../../types/person-create-dto.type";
 import { HTTPStatus } from "../../enums/http-status.enum";
 import { PersonUpdateDto } from "../../types/person-update-dto.type";
 import { AddPersonSchema } from "../../validation-schemas/add-person.validation-schema";
+import { UpdatePersonSchema } from "../../validation-schemas/update-person.validation-schema";
 
 const personRepository = new PersonRepository(PersonModel, RelationModel);
 const personService = new PersonService(personRepository);
@@ -28,7 +29,7 @@ router.put(
   "/:id",
   asyncHandler(async (req: Request, res: Response) => {
     const id = parseInt(req.params.id, 10);
-    const payload: PersonUpdateDto = req.body;
+    const payload: PersonUpdateDto = UpdatePersonSchema.parse(req.body);
     const person = await personService.update(id, payload);
     res.json(person);
   })

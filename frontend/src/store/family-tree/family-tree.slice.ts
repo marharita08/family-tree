@@ -1,13 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { PersonDto } from "../../types/person-dto.type";
 import { PersonCreateDto } from "../../types/person-create-dto.type";
+import { PersonUpdateDto } from "../../types/person-update-dto.type";
 
 interface FamilyTreeState {
   tree: PersonDto[] | null;
   loading: boolean;
   error: string | null;
   openNodes: string[];
-  person: PersonCreateDto | null;
+  person: PersonCreateDto | PersonDto | null;
   persons: PersonDto[] | null;
 }
 
@@ -101,6 +102,41 @@ const { reducer, actions } = createSlice({
     fetchPersonsFailure(state, action: PayloadAction<string>) {
       state.error = action.payload;
       state.loading = false;
+    },
+    setPerson(state, action: PayloadAction<PersonDto>) {
+      state.person = action.payload;
+    },
+    updatePersonStart(
+      state,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _: PayloadAction<{ id: number; person: PersonUpdateDto }>
+    ) {
+      state.loading = true;
+      state.error = null;
+    },
+    updatePersonSuccess(state, action: PayloadAction<PersonDto>) {
+      state.loading = false;
+      const person = action.payload as PersonDto;
+
+      const index = state.persons?.findIndex(per => per.id === person.id);
+      if (index && state.persons) {
+        state.persons[index] = person;
+      }
+
+      function updatePerson(per: PersonDto) {
+        if (+per.id === +person.id) {
+          per.name = person.name;
+          per.age = person.age;
+        } else if (per.children) {
+          per.children.forEach(child => updatePerson(child));
+        }
+      }
+
+      state.tree?.forEach(per => updatePerson(per));
+    },
+    updatePersonFailure(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
     }
   }
 });
